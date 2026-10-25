@@ -10,6 +10,8 @@ describe('Polynomial', () => {
     expect(Polynomial.of(0, 1).toString()).toBe('x');
     expect(Polynomial.of(0, 0, -1).toString()).toBe('-x^2');
     expect(Polynomial.of(0, 0, 1).toLatex()).toBe('x^{2}');
+    expect(Polynomial.of(0, 0, 0, 1 / 3).toString()).toBe('1/3x^3');
+    expect(Polynomial.of(0, 0, 0, 1 / 3).toLatex()).toBe('\\tfrac{1}{3}x^{3}');
   });
   it('differentiates and integrates exactly', () => {
     expect(p.derivative().coeffs).toEqual([-2, 6]);

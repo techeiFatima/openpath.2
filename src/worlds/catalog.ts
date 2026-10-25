@@ -1,5 +1,6 @@
 import type { Concept, Course, CurriculumGraph, Level, Subject, Topic, Unit } from '@/core/curriculum/types';
 import { GRAVITY_COVERAGE, GRAVITY_OBJECTIVES, GRAVITY_PREREQUISITES } from './gravity/content/curriculum';
+import { PLANNED_TOPIC_LIST, PLANNED_UNIT_LIST } from './curriculum-maps';
 import { MATH_CONCEPTS, MATH_COVERAGE, MATH_OBJECTIVES, MATH_PREREQUISITES, MATH_TOPICS, MATH_UNITS } from './math/content/curriculum';
 
 /**
@@ -145,12 +146,26 @@ export const CONCEPTS: Concept[] = [
 /** Each world contributes its own slice; the catalog is the union. */
 const dedupe = <T extends { id: string }>(xs: T[]): T[] => [...new Map(xs.map((x) => [x.id, x])).values()];
 
+/**
+ * Merge implemented units/topics (from worlds) with the planned maps. A planned unit whose
+ * course and name match an implemented unit is replaced by the implemented one, and its
+ * planned topics are replaced by the implemented topics, so nothing is counted twice.
+ */
+function mergePlanned(implementedUnits: Unit[], implementedTopics: Topic[]): { units: Unit[]; topics: Topic[] } {
+  const key = (u: Unit) => `${u.courseId}::${u.name.toLowerCase()}`;
+  const implementedKeys = new Set(implementedUnits.map(key));
+  const plannedUnits = PLANNED_UNIT_LIST.filter((u) => !implementedKeys.has(key(u)));
+  const keptPlannedIds = new Set(plannedUnits.map((u) => u.id));
+  const plannedTopics = PLANNED_TOPIC_LIST.filter((t) => keptPlannedIds.has(t.unitId));
+  // Within a kept planned unit, drop topics whose name duplicates an implemented topic of a same-course unit.
+  return { units: dedupe([...implementedUnits, ...plannedUnits]), topics: dedupe([...implementedTopics, ...plannedTopics]) };
+}
+
 export const CATALOG: CurriculumGraph = {
   subjects: SUBJECTS,
   levels: LEVELS,
   courses: COURSES,
-  units: dedupe([...UNITS, ...MATH_UNITS]),
-  topics: dedupe([...TOPICS, ...MATH_TOPICS]),
+  ...mergePlanned(dedupe([...UNITS, ...MATH_UNITS]), dedupe([...TOPICS, ...MATH_TOPICS])),
   concepts: dedupe([...CONCEPTS, ...MATH_CONCEPTS]),
   objectives: dedupe([...GRAVITY_PREREQUISITES, ...GRAVITY_OBJECTIVES, ...MATH_PREREQUISITES, ...MATH_OBJECTIVES]),
   coverage: [

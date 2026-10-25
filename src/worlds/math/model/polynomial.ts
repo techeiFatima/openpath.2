@@ -113,10 +113,18 @@ export class Polynomial {
   }
 
   toLatex(variable = 'x'): string {
-    return this.toString(variable).replace(/\^(\d+)/g, '^{$1}');
+    return this.toString(variable)
+      .replace(/\^(\d+)/g, '^{$1}')
+      .replace(/(\d+)\/(\d+)/g, '\\tfrac{$1}{$2}');
   }
 }
 
+/** Integers as-is; simple rationals (denominator ≤ 12) as "a/b"; otherwise 6 significant figures. */
 function fmt(n: number): string {
-  return Number.isInteger(n) ? String(n) : String(Number(n.toPrecision(6)));
+  if (Number.isInteger(n)) return String(n);
+  for (let d = 2; d <= 12; d++) {
+    const num = n * d;
+    if (Math.abs(num - Math.round(num)) < 1e-9) return `${Math.round(num)}/${d}`;
+  }
+  return String(Number(n.toPrecision(6)));
 }
