@@ -1,0 +1,42 @@
+# OpenPath
+
+**A universe of knowledge anyone can explore.** OpenPath turns concepts into interactive worlds where learners predict, experiment, derive, and then prove to themselves they can solve problems they have never seen, without losing the rigour of a good textbook.
+
+This repository holds the platform foundation and the first world, **Gravity Lab**.
+
+## Run it
+
+```sh
+npm install
+npm run dev        # http://localhost:5173
+npm run check      # typecheck + unit tests + production build
+npm run build && npm run preview
+```
+Requires Node 20+. Everything runs in the browser; progress is stored locally (no account).
+
+## What is here
+
+| Area | Path | Status |
+|---|---|---|
+| Design documents (architecture, curriculum, licensing registry, learning-experience spec, world engine, problem engine, AI instructor, data model, roadmap, milestone report) | `docs/` | written |
+| Curriculum model + prerequisite graph | `src/core/curriculum` | implemented, tested |
+| Lesson/world specification + validation | `src/core/world` | implemented, tested |
+| Assessment engine (numeric with units, expression equivalence, multiple choice, ungraded written) | `src/core/assessment` | implemented, tested |
+| Learner model (attempts, computed mastery, resume, spaced review) | `src/core/learner` | implemented, tested |
+| Instructor (scripted hint ladder, misconception feedback, grounded prompt builder) | `src/core/instructor` | implemented, tested; no LLM wired |
+| Gravity Lab physics (leapfrog N-body, analytic two-body checks, solar-system data) | `src/worlds/gravity/model` | implemented, validated by tests |
+| Gravity Lab lessons (3 lessons × 7 stages, 27 problems) | `src/worlds/gravity/content` | authored; not yet reviewed by a second physicist or tested with learners |
+| Gravity Lab 3D world (React Three Fiber) | `src/worlds/gravity/ui` | implemented |
+| Curriculum source registry | `data/curriculum-sources.json`, `docs/03-resource-registry.md` | written; most entries *Unverified* pending reads of official pages |
+
+Mathematics, Chemistry, Biology and Language worlds are designed (see `docs/05-world-engine.md`) but **not built**.
+
+## Principles baked into the code
+
+- Simulation, rendering, assessment, instruction and the learner model are separate layers; the renderer never computes physics and the instructor never decides correctness.
+- Grading is deterministic; written answers are explicitly *ungraded*; mastery requires independent solves including a transfer problem.
+- Simplifications are shown to learners; data sources and their verification status are recorded in code comments and docs.
+
+## License of this repository
+
+Not yet decided; see `docs/03-resource-registry.md` for third-party terms that constrain the choice (copyleft sources).
