@@ -39,12 +39,18 @@ Lesson blocks never set parameters directly; they name presets (`orbit-lab:canno
 
 ## 5. How the next two worlds fit
 
-**Mathematics (Functions & Calculus), environment `canvas-2d`.** Model: a function/expression object (reusing `core/assessment/expression.ts`), sampled curves, secant → tangent limit, Riemann sums with exact comparison. Measurements: f(a), secant slope over h, derivative estimate, exact derivative (from a symbolic rule set or the planned SymPy service), accumulated area. Presets: `secant:h=1`, `tangent`, `riemann:n=8`. Renderer: SVG/Canvas 2D with pan/zoom; no Three.js chunk loaded.
+**Mathematics (Functions & Calculus), environment `canvas-2d` — built (milestone 2).** Model: `Polynomial` with exact derivatives, antiderivatives, roots, vertex and transformations; `PlotFunction` wraps polynomials (exact calculus) or arbitrary expressions from `core/assessment/expression.ts` (numerical estimates, labelled). Tools: point and secant, secant → tangent with the `h` chips, Riemann sums (left/right/midpoint/trapezoid) against the exact integral, and the `a·f(b(x−h))+k` transformer. Renderer: a pan/zoom SVG graph with a draggable point; no Three.js chunk is loaded. Readouts carry the formula they come from and are tagged exact vs estimate. This was the architecture test for a non-3D environment: nothing in `src/core` or `src/ui` changed to support it beyond the shared `WorldShell`.
 
 **Chemistry (Atoms & Molecules), environment `molecular`.** Model: element data table (needs a reusable-licensed dataset, doc 03), electron configuration rules (Aufbau/Hund/Pauli with documented exceptions), and *validated* molecular structures fetched from PubChem by CID. The "can these bond?" question is answered from a curated table of known compounds, never from invented rules. Renderer: R3F ball-and-stick, clearly labelled as idealised geometry (VSEPR) distinct from measured structures.
 
 **Language (planned), environment `dialogue`.** The "simulation" is a scripted scenario state machine; the instructor layer plays characters; assessment compares utterances against CEFR-level can-do targets authored in-house.
 
-## 6. AI-assisted world creation (future)
+## 6. What the second world taught us
+
+- `WorldShell` (header, stage nav, lesson panel, viewport, resume, hidden environment in Demonstrate) and `LessonView` are world-agnostic; a world supplies `applyPreset`, `renderViewport`, `renderTextMode` and an optional `simulationContext`.
+- Preset ids are the only coupling between lesson prose and an environment.
+- The expression grader and the function model share one parser, so "the answer you typed" and "the curve you see" are the same mathematics.
+
+## 7. AI-assisted world creation (future)
 
 Because lessons are data (`LessonSpec`) validated by `validateLesson` and models expose `measurements()` with formulas, a generator can propose a lesson JSON for an existing model and have it checked structurally, numerically (reference answers vs model) and for problem variety before a human reviews it. Generating a *new validated model* from natural language is not assumed to be solved; the roadmap treats it as research.

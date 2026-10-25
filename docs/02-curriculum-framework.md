@@ -79,6 +79,10 @@ Prerequisites referenced but not yet taught: `math.alg.rearrange-formula`, `math
 - **Acceleration:** when a learner masters the Demonstrate stage with zero hints on the first attempt, later lessons in the same unit open their Demonstrate stage early.
 - **Review:** `nextReviewAt` expanding intervals; due reviews surface on the home screen.
 
-## 5. Coverage reporting
+## 5. Planned unit and topic maps (milestone 2)
 
-`CATALOG.coverage` is the single source of truth. A planned script (`npm run coverage`) will print per-subject counts for planned / authored / implemented / reviewed / learner-tested objectives so nobody can claim a subject is "covered" on the strength of a demo.
+`src/worlds/curriculum-maps.ts` holds unit → topic maps for **all 58 planned courses** (182 units, 519 topics). These are structural scaffolding only: no objectives, lessons or assessments are attached unless a world provides them. When a world implements a unit with the same course and name, the planned entry is replaced so counts are not inflated.
+
+## 6. Coverage reporting
+
+`CATALOG.coverage` is the single source of truth. `npm run coverage` prints per-subject counts of courses, units, topics and objectives, and how many objectives are authored / implemented / reviewed / learner-tested, so nobody can claim a subject is "covered" on the strength of a demo. The "reviewed" and "tested" columns are 0 until a second subject expert signs off and learners are observed.
