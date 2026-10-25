@@ -123,7 +123,7 @@ export function ProblemCard({ problem, lessonTitle, stage, simulationVisible, si
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && submit()}
-          placeholder={problem.kind === 'numeric' ? 'e.g. 7.67 km/s' : `Expression in ${problem.variables.map((v) => v.name).join(', ')}`}
+          placeholder={problem.kind === 'numeric' ? 'e.g. 7.67 km/s' : problem.kind === 'short-text' ? (problem.placeholder ?? 'Type your answer') : `Expression in ${problem.variables.map((v) => v.name).join(', ')}`}
           aria-label="Your answer"
           disabled={solved}
         />

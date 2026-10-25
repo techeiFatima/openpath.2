@@ -85,7 +85,17 @@ export interface WrittenProblem extends ProblemBase {
   rubric: string[];
 }
 
-export type Problem = NumericProblem | ExpressionProblem | MultipleChoiceProblem | WrittenProblem;
+export interface ShortTextProblem extends ProblemBase {
+  kind: 'short-text';
+  /** Accepted answers; compared after normalisation (case, whitespace, unicode super/subscripts, punctuation). */
+  accepted: string[];
+  /** Named wrong answers with targeted feedback. */
+  misconceptions?: { id: string; accepted: string[]; feedback: string }[];
+  /** Hint shown in the input placeholder. */
+  placeholder?: string;
+}
+
+export type Problem = NumericProblem | ExpressionProblem | MultipleChoiceProblem | WrittenProblem | ShortTextProblem;
 
 export type GradeStatus = 'correct' | 'incorrect' | 'ungraded' | 'invalid';
 

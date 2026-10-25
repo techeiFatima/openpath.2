@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { grade, gradeExpression, gradeNumeric } from './grade';
-import type { ExpressionProblem, NumericProblem, WrittenProblem } from './types';
+import { grade, gradeExpression, gradeNumeric, gradeShortText, normalizeText } from './grade';
+import type { ExpressionProblem, NumericProblem, ShortTextProblem, WrittenProblem } from './types';
 import { parseQuantity } from './units';
 
 const base = { objectiveIds: ['o'], category: 'computation' as const, difficulty: 2 as const, prompt: '', hints: [], solution: '' };
@@ -107,5 +107,24 @@ describe('written problems', () => {
     const r = grade(p, 'The satellite keeps falling toward Earth but its sideways speed carries it past the horizon.');
     expect(r.status).toBe('ungraded');
     expect(r.confidence).toBe('none');
+  });
+});
+
+describe('short-text problems', () => {
+  const p: ShortTextProblem = {
+    ...base, id: 's', kind: 'short-text', accepted: ['1s2 2s2 2p6', '[Ne]'],
+    misconceptions: [{ id: 'one-short', accepted: ['1s2 2s2 2p5'], feedback: 'That is fluorine: one electron short.' }],
+  };
+  it('normalises case, whitespace and unicode superscripts', () => {
+    expect(normalizeText('1s² 2s²  2p⁶.')).toBe('1s2 2s2 2p6');
+    expect(gradeShortText(p, '1S2 2S2 2P6').status).toBe('correct');
+    expect(gradeShortText(p, '1s² 2s² 2p⁶').status).toBe('correct');
+    expect(gradeShortText(p, '[ne]').status).toBe('correct');
+  });
+  it('attributes misconceptions and flags formatting near-misses', () => {
+    expect(gradeShortText(p, '1s2 2s2 2p5').misconceptionId).toBe('one-short');
+    expect(gradeShortText(p, '1s22s22p6').feedback).toMatch(/formatting/);
+    expect(gradeShortText(p, '').status).toBe('invalid');
+    expect(grade(p, 'helium').status).toBe('incorrect');
   });
 });

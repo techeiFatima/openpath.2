@@ -7,18 +7,22 @@ import { MasteryBadge } from '@/ui/MasteryBadge';
 import { ProblemCard } from '@/ui/ProblemCard';
 import { OBJECTIVES_BY_ID } from '@/worlds/catalog';
 import { summarizeMastery } from '@/core/learner/mastery';
-import { useGravityUi } from './store';
 
+/**
+ * Generic renderer for one lesson stage. World-agnostic: the world supplies `applyPreset`
+ * so prediction reveals and sim-tasks can load named setups in its own simulation.
+ */
 interface Props {
   lesson: LessonSpec;
   stage: Stage;
   stageIndex: number;
   simulationVisible: boolean;
   simulationContext?: InstructorContext['simulation'];
+  applyPreset(presetId: string): void;
   onNavigate(index: number): void;
 }
 
-export function LessonView({ lesson, stage, stageIndex, simulationVisible, simulationContext, onNavigate }: Props) {
+export function LessonView({ lesson, stage, stageIndex, simulationVisible, simulationContext, applyPreset, onNavigate }: Props) {
   const completeStage = useLearnerStore((s) => s.completeStage);
   const isLast = stageIndex === lesson.stages.length - 1;
   const problems = new Map(lesson.problems.map((p) => [p.id, p]));
@@ -31,7 +35,7 @@ export function LessonView({ lesson, stage, stageIndex, simulationVisible, simul
       </header>
 
       {stage.blocks.map((b, i) => (
-        <BlockView key={i} block={b} lesson={lesson} stage={stage} simulationVisible={simulationVisible} {...(simulationContext ? { simulationContext } : {})} problems={problems} />
+        <BlockView key={i} block={b} lesson={lesson} stage={stage} simulationVisible={simulationVisible} {...(simulationContext ? { simulationContext } : {})} problems={problems} applyPreset={applyPreset} />
       ))}
 
       {stage.kind === 'review' && (
@@ -80,9 +84,10 @@ interface BlockProps {
   simulationVisible: boolean;
   simulationContext?: InstructorContext['simulation'];
   problems: Map<string, LessonSpec['problems'][number]>;
+  applyPreset(presetId: string): void;
 }
 
-function BlockView({ block, lesson, stage, simulationVisible, simulationContext, problems }: BlockProps) {
+function BlockView({ block, lesson, stage, simulationVisible, simulationContext, problems, applyPreset }: BlockProps) {
   switch (block.type) {
     case 'text':
       return <Markdown md={block.md} />;
@@ -107,9 +112,9 @@ function BlockView({ block, lesson, stage, simulationVisible, simulationContext,
         </ul>
       );
     case 'prediction':
-      return <PredictionView block={block} lessonId={lesson.id} />;
+      return <PredictionView block={block} lessonId={lesson.id} applyPreset={applyPreset} />;
     case 'sim-task':
-      return <SimTaskView block={block} />;
+      return <SimTaskView block={block} applyPreset={applyPreset} />;
     case 'problem': {
       const p = problems.get(block.problemId);
       if (!p) return <p className="error">Missing problem {block.problemId}</p>;
@@ -118,10 +123,9 @@ function BlockView({ block, lesson, stage, simulationVisible, simulationContext,
   }
 }
 
-function PredictionView({ block, lessonId }: { block: Extract<Block, { type: 'prediction' }>; lessonId: string }) {
+function PredictionView({ block, lessonId, applyPreset }: { block: Extract<Block, { type: 'prediction' }>; lessonId: string; applyPreset(id: string): void }) {
   const predictions = useLearnerStore((s) => s.predictions);
   const recordPrediction = useLearnerStore((s) => s.recordPrediction);
-  const applyPreset = useGravityUi((s) => s.applyPreset);
   const existing = predictions.find((p) => p.lessonId === lessonId && p.id.endsWith(block.id));
   const [choice, setChoice] = useState<string | null>(existing?.choiceId ?? null);
   const revealed = choice !== null;
@@ -157,8 +161,7 @@ function PredictionView({ block, lessonId }: { block: Extract<Block, { type: 'pr
   );
 }
 
-function SimTaskView({ block }: { block: Extract<Block, { type: 'sim-task' }> }) {
-  const applyPreset = useGravityUi((s) => s.applyPreset);
+function SimTaskView({ block, applyPreset }: { block: Extract<Block, { type: 'sim-task' }>; applyPreset(id: string): void }) {
   const [checks, setChecks] = useState<boolean[]>([]);
   return (
     <section className="sim-task">

@@ -116,6 +116,7 @@ export function validateLesson(lesson: LessonSpec): string[] {
     for (const o of p.objectiveIds) if (!lesson.objectiveIds.includes(o)) issues.push(`${lesson.id}: problem ${p.id} targets objective ${o} outside the lesson`);
     if (p.kind === 'multiple-choice' && !p.options.some((o) => o.id === p.correctId)) issues.push(`${lesson.id}: ${p.id} correctId missing`);
     if (p.hints.length === 0 && p.kind !== 'written') issues.push(`${lesson.id}: ${p.id} has no hints`);
+    if (p.kind === 'short-text' && p.accepted.length === 0) issues.push(`${lesson.id}: ${p.id} has no accepted answers`);
   }
   const categories = new Set(lesson.problems.filter((p) => !p.lowStakes).map((p) => p.category));
   if (!categories.has('transfer') && !categories.has('application')) issues.push(`${lesson.id}: no transfer/application problem, mastery cannot be demonstrated`);

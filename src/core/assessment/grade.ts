@@ -1,5 +1,5 @@
 import { areEquivalent, compile, ExpressionError } from './expression';
-import type { ExpressionProblem, GradeResult, MultipleChoiceProblem, NumericProblem, Problem, WrittenProblem } from './types';
+import type { ExpressionProblem, GradeResult, MultipleChoiceProblem, NumericProblem, Problem, ShortTextProblem, WrittenProblem } from './types';
 import { dimensionOfUnit, parseQuantity, toSI } from './units';
 
 export function gradeNumeric(problem: NumericProblem, rawInput: string): GradeResult {
@@ -119,11 +119,47 @@ export function gradeWritten(problem: WrittenProblem, text: string): GradeResult
   };
 }
 
+const SUPERSCRIPTS: Record<string, string> = { '⁰': '0', '¹': '1', '²': '2', '³': '3', '⁴': '4', '⁵': '5', '⁶': '6', '⁷': '7', '⁸': '8', '⁹': '9', '⁺': '+', '⁻': '-' };
+const SUBSCRIPTS: Record<string, string> = { '₀': '0', '₁': '1', '₂': '2', '₃': '3', '₄': '4', '₅': '5', '₆': '6', '₇': '7', '₈': '8', '₉': '9' };
+
+/**
+ * Normalise free text for comparison: lower-case, unicode super/subscripts → ASCII,
+ * curly quotes → straight, collapse whitespace, strip trailing punctuation.
+ */
+export function normalizeText(s: string): string {
+  return [...s]
+    .map((ch) => SUPERSCRIPTS[ch] ?? SUBSCRIPTS[ch] ?? ch)
+    .join('')
+    .toLowerCase()
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201c\u201d]/g, '"')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/[.!?]+$/, '')
+    .trim();
+}
+
+export function gradeShortText(problem: ShortTextProblem, input: string): GradeResult {
+  const norm = normalizeText(input);
+  if (!norm) return { status: 'invalid', confidence: 'deterministic', feedback: 'Type an answer first.' };
+  if (problem.accepted.some((a) => normalizeText(a) === norm)) return { status: 'correct', confidence: 'deterministic', feedback: 'Correct.' };
+  for (const m of problem.misconceptions ?? []) {
+    if (m.accepted.some((a) => normalizeText(a) === norm)) return { status: 'incorrect', confidence: 'deterministic', feedback: m.feedback, misconceptionId: m.id };
+  }
+  // Near-miss: same letters/digits ignoring spaces and separators.
+  const squash = (x: string) => x.replace(/[^a-z0-9+\-]/g, '');
+  if (problem.accepted.some((a) => squash(normalizeText(a)) === squash(norm))) {
+    return { status: 'incorrect', confidence: 'deterministic', feedback: 'Almost: the content is right but the formatting is not. Check spacing and separators.' };
+  }
+  return { status: 'incorrect', confidence: 'deterministic', feedback: 'Not correct yet.' };
+}
+
 export function grade(problem: Problem, input: string): GradeResult {
   switch (problem.kind) {
     case 'numeric': return gradeNumeric(problem, input);
     case 'expression': return gradeExpression(problem, input);
     case 'multiple-choice': return gradeMultipleChoice(problem, input);
     case 'written': return gradeWritten(problem, input);
+    case 'short-text': return gradeShortText(problem, input);
   }
 }

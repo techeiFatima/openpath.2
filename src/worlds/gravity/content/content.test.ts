@@ -24,6 +24,8 @@ describe('gravity content integrity', () => {
           expect(grade(p, p.answer).status, `${l.id}/${p.id}`).toBe('correct');
         } else if (p.kind === 'multiple-choice') {
           expect(grade(p, p.correctId).status, `${l.id}/${p.id}`).toBe('correct');
+        } else if (p.kind === 'short-text') {
+          for (const a of p.accepted) expect(grade(p, a).status, `${l.id}/${p.id}`).toBe('correct');
         }
       }
     }
