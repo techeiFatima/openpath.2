@@ -1,21 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { grade } from '@/core/assessment/grade';
 import { validateGraph } from '@/core/curriculum/graph';
-import type { CurriculumGraph } from '@/core/curriculum/types';
 import { validateLesson } from '@/core/world/spec';
 import { CATALOG } from '@/worlds/catalog';
-import { BIOLOGY_CONCEPTS, BIOLOGY_COVERAGE, BIOLOGY_OBJECTIVES, BIOLOGY_PREREQUISITES, BIOLOGY_TOPICS, BIOLOGY_UNITS } from './curriculum';
+import { BIOLOGY_OBJECTIVES, BIOLOGY_PREREQUISITES, BIOLOGY_UNITS } from './curriculum';
 import { BIOLOGY_LESSONS, BIOLOGY_WORLD } from './index';
 
 /** The catalog as it will look once the integrator appends the biology slice. */
-const MERGED: CurriculumGraph = {
-  ...CATALOG,
-  units: [...CATALOG.units, ...BIOLOGY_UNITS],
-  topics: [...CATALOG.topics, ...BIOLOGY_TOPICS],
-  concepts: [...CATALOG.concepts, ...BIOLOGY_CONCEPTS],
-  objectives: [...CATALOG.objectives, ...BIOLOGY_PREREQUISITES, ...BIOLOGY_OBJECTIVES],
-  coverage: [...CATALOG.coverage, ...BIOLOGY_COVERAGE],
-};
+const MERGED = CATALOG; // the biology slice is merged into the catalog by the integrator
 const OBJECTIVE_IDS = new Set(MERGED.objectives.map((o) => o.id));
 
 describe('biology content integrity', () => {

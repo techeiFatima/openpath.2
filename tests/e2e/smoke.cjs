@@ -116,6 +116,18 @@ report.bioDnaReadouts = await page.locator('.measure').count();
 report.bioDnaText = (await page.locator('.measurements').first().textContent())?.slice(0, 120);
 await page.screenshot({ path: `${out}/11-bio-dna.png` });
 
+// Language world: a scripted conversation turn
+await page.goto(`${base}/#/world/conversation/lesson/language.at-the-market?stage=1`, { waitUntil: 'networkidle' });
+await page.waitForSelector('.measurements', { timeout: 20000 });
+await page.waitForTimeout(500);
+const convInput = page.locator('input[type="text"]').first();
+report.langInputPresent = await convInput.count();
+await convInput.fill('hello');
+await page.keyboard.press('Enter');
+await page.waitForTimeout(400);
+report.langTranscript = (await page.locator('[aria-live="polite"]').first().textContent())?.replace(/\s+/g, ' ').slice(0, 160);
+await page.screenshot({ path: `${out}/12-language.png` });
+
 // Resume: home shows continue link
 await page.setViewportSize({ width: 1400, height: 900 });
 await page.goto(`${base}/#/`, { waitUntil: 'networkidle' });

@@ -1,0 +1,121 @@
+import type { Scenario } from '../scenario';
+
+/**
+ * Scenario 1 — Meeting a neighbour. Greetings, names, where you are from, be + pronouns.
+ * Patterns are matched against the canonical reply (lower-case, no punctuation,
+ * contractions expanded, digits as words). Every modelReply must itself be accepted.
+ */
+export const neighbourScenario: Scenario = {
+  id: 'neighbour',
+  title: 'Meeting a neighbour',
+  setting: 'Outside your new flat. A woman from the flat next door says hello.',
+  character: { name: 'Sara', role: 'your neighbour', avatar: 'neighbour' },
+  turns: [
+    {
+      id: 'n1',
+      characterLine: "Hello! I'm Sara. I live next door.",
+      goal: 'Say hello and tell her your name.',
+      accepted: ['hello i am amina', 'hi my name is amina', 'hello my name is amina'],
+      patterns: ['^(hello|hi|good morning|good afternoon|good evening)( sara)? (i am|my name is) [a-z]+( [a-z]+)?$'],
+      feedback: [
+        { id: 'wrong-be', rule: 'wrong-be-form', message: 'With **I** use **am**: I am Amina.' },
+        { id: 'me-name', match: ['me name', 'me is', 'my name am', 'my name are'], message: 'Say **My name is …** or **I am …**.' },
+        { id: 'missing-be', pattern: '^(hello|hi|good morning) i [a-z]+$', message: "Add the verb: **I am** Amina (or I'm Amina)." },
+        { id: 'no-greeting', pattern: '^(i am|my name is)', message: 'Start with a greeting: **Hello!** Then your name.' },
+        { id: 'no-name', missing: ['i am', 'my name is'], message: "Tell her your name: 'I am …' or 'My name is …'." },
+      ],
+      modelReply: "Hello! I'm Amina.",
+      vocabulary: ['hello', 'name'],
+    },
+    {
+      id: 'n2',
+      characterLine: 'Nice to meet you! How are you today?',
+      goal: 'Say you are fine, say thank you, and ask her back.',
+      accepted: ['i am fine thank you and you', 'fine thanks and you', 'i am fine thank you how are you', 'i am good thank you and you', 'very well thank you and you'],
+      patterns: ['^(i am )?(fine|good|well|very well|okay|great)( thank you| thanks)( and you| how are you| and how are you)$'],
+      feedback: [
+        { id: 'wrong-be', rule: 'wrong-be-form', message: 'With **I** use **am**: I am fine.' },
+        { id: 'missing-be', rule: 'missing-be', message: 'Add the verb: I **am** fine.' },
+        { id: 'no-thanks', missing: ['thank you', 'thanks'], message: "Add **thank you** after 'fine'." },
+        { id: 'no-ask-back', missing: ['and you', 'how are you'], message: 'Ask her back: add **And you?**' },
+      ],
+      modelReply: "I'm fine, thank you. And you?",
+      vocabulary: ['fine', 'thank you', 'how are you'],
+    },
+    {
+      id: 'n3',
+      characterLine: "I'm fine, thanks. Where are you from?",
+      goal: 'Say where you are from: a country or a city.',
+      accepted: ['i am from afghanistan', 'i am from kabul', 'i am from herat'],
+      patterns: ['^i am from [a-z]+( [a-z]+){0,2}$', '^i come from [a-z]+( [a-z]+){0,2}$'],
+      feedback: [
+        { id: 'am-come', match: ['i am come from'], message: "Say either **I am from** Kabul or **I come from** Kabul, not both." },
+        { id: 'wrong-be', rule: 'wrong-be-form', message: 'With **I** use **am**: I am from …' },
+        { id: 'missing-be', rule: 'missing-be', message: 'Add the verb: I **am** from Kabul.' },
+        { id: 'no-from', pattern: '^i am [a-z]+$', message: 'Use **from**: I am **from** Kabul.' },
+        { id: 'from-only', pattern: '^from ', message: 'Make a full sentence: **I am from** …' },
+      ],
+      modelReply: "I'm from Afghanistan.",
+      vocabulary: ['from'],
+    },
+    {
+      id: 'n4',
+      characterLine: "That's interesting! Do you live in this building?",
+      goal: 'Say yes: you live in flat number four.',
+      accepted: ['yes i live in flat four', 'yes i live in flat number four', 'yes in flat four', 'yes i do i live in flat four'],
+      patterns: ['^yes( i do)?( i live| i am)? in (flat|flat number|number|apartment) four$'],
+      feedback: [
+        { id: 'said-no', pattern: '^no', message: 'The goal is to say **yes**: Yes, I live in flat four.' },
+        { id: 'living', match: ['i living', 'i am living', 'i am live'], message: 'Use the simple form: **I live** in flat four.' },
+        { id: 'no-in', pattern: '^yes i live (flat|number)', message: 'Use **in**: I live **in** flat four.' },
+        { id: 'no-number', missing: ['four'], message: "Give the flat number: **flat four** (or 'flat number four')." },
+      ],
+      modelReply: 'Yes, I live in flat four.',
+      vocabulary: ['yes'],
+    },
+    {
+      id: 'n5',
+      characterLine: 'Flat four, next to mine! What do you do? Do you work or study?',
+      goal: 'Say you are a student.',
+      accepted: ['i am a student', 'i am a student here', 'i study', 'i study here', 'i study english'],
+      patterns: ['^i am a student( here)?$', '^i study( here| english)?$', '^i am a student i study english$'],
+      feedback: [
+        { id: 'missing-article', rule: 'missing-article', message: 'Jobs take **a**: I am **a** {found}.' },
+        { id: 'wrong-be', rule: 'wrong-be-form', message: 'With **I** use **am**: I am a student.' },
+        { id: 'missing-be', rule: 'missing-be', message: 'Add the verb: I **am** a student.' },
+        { id: 'work', match: ['i work'], message: 'In this story you are a student: **I am a student.**' },
+      ],
+      modelReply: "I'm a student.",
+      vocabulary: ['student'],
+    },
+    {
+      id: 'n6',
+      characterLine: 'A student, great! Do you have family here?',
+      goal: 'Say yes: your brother lives with you.',
+      accepted: ['yes my brother lives with me', 'yes i live with my brother', 'yes my brother is here', 'yes i have a brother here', 'yes my brother lives here'],
+      patterns: ['^yes( i do)? (my brother lives (with me|here)|i live with my brother|my brother is here( with me)?|i have a brother here)$'],
+      feedback: [
+        { id: 'third-person-s', match: ['brother live'], message: 'After **my brother** (he) the verb takes **-s**: my brother live**s** with me.' },
+        { id: 'brother-are', match: ['brother are'], message: '**My brother** is one person: my brother **is** here.' },
+        { id: 'missing-article', rule: 'missing-article', message: 'Use **a**: I have **a** {found} here.' },
+        { id: 'said-no', pattern: '^no', message: 'Say **yes** and mention your brother.' },
+        { id: 'no-brother', missing: ['brother'], message: 'Mention your **brother**: My brother lives with me.' },
+      ],
+      modelReply: 'Yes, my brother lives with me.',
+      vocabulary: ['brother', 'yes'],
+    },
+    {
+      id: 'n7',
+      characterLine: "That's nice. I have a small shop on this street. Come and visit us!",
+      goal: 'Thank her and say goodbye.',
+      accepted: ['thank you goodbye', 'thank you bye', 'thanks goodbye', 'thank you see you soon', 'thank you sara goodbye', 'thanks bye'],
+      patterns: ['^(thank you|thanks)( very much)?( sara)? (goodbye|bye|see you|see you soon|see you later|have a nice day)( sara)?$'],
+      feedback: [
+        { id: 'no-thanks', missing: ['thank you', 'thanks'], message: 'Say **thank you** first.' },
+        { id: 'no-goodbye', missing: ['goodbye', 'bye', 'see you'], message: 'End with **Goodbye** or **See you**.' },
+      ],
+      modelReply: 'Thank you! Goodbye, Sara.',
+      vocabulary: ['thank you', 'goodbye'],
+    },
+  ],
+};
