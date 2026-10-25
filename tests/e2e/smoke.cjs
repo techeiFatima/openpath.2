@@ -82,6 +82,28 @@ await page.waitForTimeout(2500);
 report.mobileHorizontalScroll = await page.evaluate(() => document.documentElement.scrollWidth > window.innerWidth + 1);
 await page.screenshot({ path: `${out}/07-mobile.png` });
 
+// Mathematics world: graph renders, dragging/sliders drive readouts, expression grading
+await page.setViewportSize({ width: 1400, height: 900 });
+await page.goto(`${base}/#/world/functions-calculus/lesson/math.derivatives?stage=1`, { waitUntil: 'networkidle' });
+await page.waitForSelector('svg.graph', { timeout: 20000 });
+await page.waitForTimeout(500);
+report.mathReadouts = await page.locator('.measure').count();
+report.mathSecant = await page.locator('.measure:has-text("Average rate of change") dd').textContent();
+await page.locator('button.chip:has-text("h = 0.01")').click();
+await page.waitForTimeout(200);
+report.mathSecantSmallH = await page.locator('.measure:has-text("Average rate of change") dd').textContent();
+await page.screenshot({ path: `${out}/08-math-secant.png` });
+await page.goto(`${base}/#/world/functions-calculus/lesson/math.derivatives?stage=3`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(500);
+const mcard = page.locator('section.problem[aria-labelledby="l3-rule-prompt"]');
+await mcard.locator('input.answer-input').fill('6x - 2');
+await mcard.locator('button:has-text("Check")').click();
+report.mathExpressionFeedback = await mcard.locator('.feedback').textContent();
+await page.goto(`${base}/#/world/functions-calculus/lesson/math.integrals?stage=1`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(500);
+report.mathRiemannRects = await page.locator('svg.graph rect[stroke="#8fd3ff"]').count();
+await page.screenshot({ path: `${out}/09-math-riemann.png` });
+
 // Resume: home shows continue link
 await page.setViewportSize({ width: 1400, height: 900 });
 await page.goto(`${base}/#/`, { waitUntil: 'networkidle' });

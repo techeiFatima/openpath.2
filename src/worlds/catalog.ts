@@ -1,5 +1,6 @@
 import type { Concept, Course, CurriculumGraph, Level, Subject, Topic, Unit } from '@/core/curriculum/types';
 import { GRAVITY_COVERAGE, GRAVITY_OBJECTIVES, GRAVITY_PREREQUISITES } from './gravity/content/curriculum';
+import { MATH_CONCEPTS, MATH_COVERAGE, MATH_OBJECTIVES, MATH_PREREQUISITES, MATH_TOPICS, MATH_UNITS } from './math/content/curriculum';
 
 /**
  * The OpenPath curriculum catalog.
@@ -141,18 +142,22 @@ export const CONCEPTS: Concept[] = [
   { id: 'math.alg.exponents', topicId: 'math.alg.exponents-radicals', name: 'Powers, roots and scientific notation', summary: 'Evaluate and manipulate squares, cubes and their roots.' },
 ];
 
+/** Each world contributes its own slice; the catalog is the union. */
+const dedupe = <T extends { id: string }>(xs: T[]): T[] => [...new Map(xs.map((x) => [x.id, x])).values()];
+
 export const CATALOG: CurriculumGraph = {
   subjects: SUBJECTS,
   levels: LEVELS,
   courses: COURSES,
-  units: UNITS,
-  topics: TOPICS,
-  concepts: CONCEPTS,
-  objectives: [...GRAVITY_PREREQUISITES, ...GRAVITY_OBJECTIVES],
+  units: dedupe([...UNITS, ...MATH_UNITS]),
+  topics: dedupe([...TOPICS, ...MATH_TOPICS]),
+  concepts: dedupe([...CONCEPTS, ...MATH_CONCEPTS]),
+  objectives: dedupe([...GRAVITY_PREREQUISITES, ...GRAVITY_OBJECTIVES, ...MATH_PREREQUISITES, ...MATH_OBJECTIVES]),
   coverage: [
     ...GRAVITY_COVERAGE,
     ...GRAVITY_PREREQUISITES.map((o) => ({ objectiveId: o.id, planned: true, authored: false, implemented: false, scientificallyReviewed: false, learnerTested: false, notes: 'Prerequisite referenced by Gravity Lab; no lesson yet.' })),
-  ],
+    ...MATH_COVERAGE,
+  ].filter((c, i, arr) => arr.findIndex((d) => d.objectiveId === c.objectiveId) === i),
 };
 
 export const OBJECTIVES_BY_ID = new Map(CATALOG.objectives.map((o) => [o.id, o]));

@@ -1,17 +1,26 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, type ComponentType } from 'react';
 import { Home } from './Home';
 import { useRoute } from './router';
 
-const GravityWorld = lazy(() => import('@/worlds/gravity/ui/GravityWorld'));
+interface WorldProps { lessonId: string; stageIndex: number }
+
+/** Worlds are code-split: the home page never loads Three.js or a world's content. */
+const WORLD_COMPONENTS: Record<string, ComponentType<WorldProps>> = {
+  gravity: lazy(() => import('@/worlds/gravity/ui/GravityWorld')),
+  'functions-calculus': lazy(() => import('@/worlds/math/ui/MathWorld')),
+};
 
 export function App() {
   const route = useRoute();
-  if (route.name === 'lesson' && route.worldId === 'gravity') {
-    return (
-      <Suspense fallback={<div className="loading" role="status">Loading Gravity Lab…</div>}>
-        <GravityWorld lessonId={route.lessonId} stageIndex={route.stage} />
-      </Suspense>
-    );
+  if (route.name === 'lesson') {
+    const World = WORLD_COMPONENTS[route.worldId];
+    if (World) {
+      return (
+        <Suspense fallback={<div className="loading" role="status">Loading world…</div>}>
+          <World lessonId={route.lessonId} stageIndex={route.stage} />
+        </Suspense>
+      );
+    }
   }
   return <Home />;
 }
