@@ -3,7 +3,7 @@ import { grade } from '@/core/assessment/grade';
 import { validateGraph } from '@/core/curriculum/graph';
 import { validateLesson } from '@/core/world/spec';
 import { CATALOG } from '@/worlds/catalog';
-import { CHEMISTRY_OBJECTIVES, CHEMISTRY_UNITS } from './curriculum';
+import { CHEMISTRY_OBJECTIVES, CHEMISTRY_PREREQUISITES, CHEMISTRY_UNITS } from './curriculum';
 import { CHEMISTRY_LESSONS, CHEMISTRY_WORLD } from './index';
 
 const ALL_PROBLEMS = CHEMISTRY_LESSONS.flatMap((l) => l.problems.map((p) => ({ lesson: l.id, p })));
