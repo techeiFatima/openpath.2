@@ -1,6 +1,7 @@
 import type { Concept, Course, CurriculumGraph, Level, Subject, Topic, Unit } from '@/core/curriculum/types';
 import { GRAVITY_COVERAGE, GRAVITY_OBJECTIVES, GRAVITY_PREREQUISITES } from './gravity/content/curriculum';
 import { PLANNED_TOPIC_LIST, PLANNED_UNIT_LIST } from './curriculum-maps';
+import { BIOLOGY_CONCEPTS, BIOLOGY_COVERAGE, BIOLOGY_OBJECTIVES, BIOLOGY_PREREQUISITES, BIOLOGY_TOPICS, BIOLOGY_UNITS } from './biology/content/curriculum';
 import { MATH_CONCEPTS, MATH_COVERAGE, MATH_OBJECTIVES, MATH_PREREQUISITES, MATH_TOPICS, MATH_UNITS } from './math/content/curriculum';
 
 /**
@@ -165,13 +166,14 @@ export const CATALOG: CurriculumGraph = {
   subjects: SUBJECTS,
   levels: LEVELS,
   courses: COURSES,
-  ...mergePlanned(dedupe([...UNITS, ...MATH_UNITS]), dedupe([...TOPICS, ...MATH_TOPICS])),
-  concepts: dedupe([...CONCEPTS, ...MATH_CONCEPTS]),
-  objectives: dedupe([...GRAVITY_PREREQUISITES, ...GRAVITY_OBJECTIVES, ...MATH_PREREQUISITES, ...MATH_OBJECTIVES]),
+  ...mergePlanned(dedupe([...UNITS, ...MATH_UNITS, ...BIOLOGY_UNITS]), dedupe([...TOPICS, ...MATH_TOPICS, ...BIOLOGY_TOPICS])),
+  concepts: dedupe([...CONCEPTS, ...MATH_CONCEPTS, ...BIOLOGY_CONCEPTS]),
+  objectives: dedupe([...GRAVITY_PREREQUISITES, ...GRAVITY_OBJECTIVES, ...MATH_PREREQUISITES, ...MATH_OBJECTIVES, ...BIOLOGY_PREREQUISITES, ...BIOLOGY_OBJECTIVES]),
   coverage: [
     ...GRAVITY_COVERAGE,
     ...GRAVITY_PREREQUISITES.map((o) => ({ objectiveId: o.id, planned: true, authored: false, implemented: false, scientificallyReviewed: false, learnerTested: false, notes: 'Prerequisite referenced by Gravity Lab; no lesson yet.' })),
     ...MATH_COVERAGE,
+    ...BIOLOGY_COVERAGE,
   ].filter((c, i, arr) => arr.findIndex((d) => d.objectiveId === c.objectiveId) === i),
 };
 

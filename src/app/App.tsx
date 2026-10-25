@@ -8,6 +8,7 @@ interface WorldProps { lessonId: string; stageIndex: number }
 const WORLD_COMPONENTS: Record<string, ComponentType<WorldProps>> = {
   gravity: lazy(() => import('@/worlds/gravity/ui/GravityWorld')),
   'functions-calculus': lazy(() => import('@/worlds/math/ui/MathWorld')),
+  cell: lazy(() => import('@/worlds/biology/ui/BiologyWorld')),
 };
 
 export function App() {

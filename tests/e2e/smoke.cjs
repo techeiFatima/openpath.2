@@ -104,6 +104,18 @@ await page.waitForTimeout(500);
 report.mathRiemannRects = await page.locator('svg.graph rect[stroke="#8fd3ff"]').count();
 await page.screenshot({ path: `${out}/09-math-riemann.png` });
 
+// Biology world: scale explorer and DNA workbench
+await page.goto(`${base}/#/world/cell/lesson/cell.powers-of-ten?stage=1`, { waitUntil: 'networkidle' });
+await page.waitForSelector('.bio-canvas svg', { timeout: 20000 });
+await page.waitForTimeout(500);
+report.bioScaleReadouts = await page.locator('.measure').count();
+await page.screenshot({ path: `${out}/10-bio-scale.png` });
+await page.goto(`${base}/#/world/cell/lesson/cell.gene-to-protein?stage=1`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(500);
+report.bioDnaReadouts = await page.locator('.measure').count();
+report.bioDnaText = (await page.locator('.measurements').first().textContent())?.slice(0, 120);
+await page.screenshot({ path: `${out}/11-bio-dna.png` });
+
 // Resume: home shows continue link
 await page.setViewportSize({ width: 1400, height: 900 });
 await page.goto(`${base}/#/`, { waitUntil: 'networkidle' });
