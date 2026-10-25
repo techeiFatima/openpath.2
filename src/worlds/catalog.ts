@@ -3,6 +3,7 @@ import { GRAVITY_COVERAGE, GRAVITY_OBJECTIVES, GRAVITY_PREREQUISITES } from './g
 import { PLANNED_TOPIC_LIST, PLANNED_UNIT_LIST } from './curriculum-maps';
 import { BIOLOGY_CONCEPTS, BIOLOGY_COVERAGE, BIOLOGY_OBJECTIVES, BIOLOGY_PREREQUISITES, BIOLOGY_TOPICS, BIOLOGY_UNITS } from './biology/content/curriculum';
 import { LANGUAGE_CONCEPTS, LANGUAGE_COVERAGE, LANGUAGE_OBJECTIVES, LANGUAGE_PREREQUISITES, LANGUAGE_TOPICS, LANGUAGE_UNITS } from './language/content/curriculum';
+import { CHEMISTRY_CONCEPTS, CHEMISTRY_COVERAGE, CHEMISTRY_OBJECTIVES, CHEMISTRY_PREREQUISITES, CHEMISTRY_TOPICS, CHEMISTRY_UNITS } from './chemistry/content/curriculum';
 import { MATH_CONCEPTS, MATH_COVERAGE, MATH_OBJECTIVES, MATH_PREREQUISITES, MATH_TOPICS, MATH_UNITS } from './math/content/curriculum';
 
 /**
@@ -167,15 +168,16 @@ export const CATALOG: CurriculumGraph = {
   subjects: SUBJECTS,
   levels: LEVELS,
   courses: COURSES,
-  ...mergePlanned(dedupe([...UNITS, ...MATH_UNITS, ...BIOLOGY_UNITS, ...LANGUAGE_UNITS]), dedupe([...TOPICS, ...MATH_TOPICS, ...BIOLOGY_TOPICS, ...LANGUAGE_TOPICS])),
-  concepts: dedupe([...CONCEPTS, ...MATH_CONCEPTS, ...BIOLOGY_CONCEPTS, ...LANGUAGE_CONCEPTS]),
-  objectives: dedupe([...GRAVITY_PREREQUISITES, ...GRAVITY_OBJECTIVES, ...MATH_PREREQUISITES, ...MATH_OBJECTIVES, ...BIOLOGY_PREREQUISITES, ...BIOLOGY_OBJECTIVES, ...LANGUAGE_PREREQUISITES, ...LANGUAGE_OBJECTIVES]),
+  ...mergePlanned(dedupe([...UNITS, ...MATH_UNITS, ...BIOLOGY_UNITS, ...LANGUAGE_UNITS, ...CHEMISTRY_UNITS]), dedupe([...TOPICS, ...MATH_TOPICS, ...BIOLOGY_TOPICS, ...LANGUAGE_TOPICS, ...CHEMISTRY_TOPICS])),
+  concepts: dedupe([...CONCEPTS, ...MATH_CONCEPTS, ...BIOLOGY_CONCEPTS, ...LANGUAGE_CONCEPTS, ...CHEMISTRY_CONCEPTS]),
+  objectives: dedupe([...GRAVITY_PREREQUISITES, ...GRAVITY_OBJECTIVES, ...MATH_PREREQUISITES, ...MATH_OBJECTIVES, ...BIOLOGY_PREREQUISITES, ...BIOLOGY_OBJECTIVES, ...LANGUAGE_PREREQUISITES, ...LANGUAGE_OBJECTIVES, ...CHEMISTRY_PREREQUISITES, ...CHEMISTRY_OBJECTIVES]),
   coverage: [
     ...GRAVITY_COVERAGE,
     ...GRAVITY_PREREQUISITES.map((o) => ({ objectiveId: o.id, planned: true, authored: false, implemented: false, scientificallyReviewed: false, learnerTested: false, notes: 'Prerequisite referenced by Gravity Lab; no lesson yet.' })),
     ...MATH_COVERAGE,
     ...BIOLOGY_COVERAGE,
     ...LANGUAGE_COVERAGE,
+    ...CHEMISTRY_COVERAGE,
   ].filter((c, i, arr) => arr.findIndex((d) => d.objectiveId === c.objectiveId) === i),
 };
 

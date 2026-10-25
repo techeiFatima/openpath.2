@@ -10,6 +10,7 @@ const WORLD_COMPONENTS: Record<string, ComponentType<WorldProps>> = {
   'functions-calculus': lazy(() => import('@/worlds/math/ui/MathWorld')),
   cell: lazy(() => import('@/worlds/biology/ui/BiologyWorld')),
   conversation: lazy(() => import('@/worlds/language/ui/LanguageWorld')),
+  'atoms-molecules': lazy(() => import('@/worlds/chemistry/ui/ChemistryWorld')),
 };
 
 export function App() {

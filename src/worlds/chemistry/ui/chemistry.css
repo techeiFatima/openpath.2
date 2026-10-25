@@ -1,0 +1,68 @@
+/* Atoms & Molecules: environment-specific styles. Shared chrome comes from src/styles/global.css. */
+.chem-stage { position: relative; min-height: 0; flex: 1; overflow: auto; padding: 14px 16px; }
+.chem-stage-molecule { padding: 0; }
+.muted { color: var(--text-dim); }
+.small { font-size: .82rem; }
+.chip-static { font-size: .75rem; padding: .15em .6em; border-radius: 999px; border: 1px solid var(--line); color: var(--text-dim); margin-left: .4em; }
+
+/* Atom builder */
+.atom-builder { display: grid; grid-template-columns: minmax(220px, 1fr) minmax(220px, 1.2fr); grid-template-rows: auto 1fr; gap: 12px 20px; height: 100%; }
+.atom-controls { display: grid; gap: 10px; align-content: start; }
+.atom-counter label { display: block; font-size: .8rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; }
+.atom-counter-row { display: flex; align-items: center; gap: 6px; }
+.atom-counter-row input { width: 4.5em; padding: .35em .5em; border-radius: 8px; border: 1px solid var(--line); background: var(--bg-elev-2); text-align: center; font-variant-numeric: tabular-nums; }
+.atom-identity { grid-column: 1; align-self: start; }
+.atom-name { font-size: 1.15rem; margin-bottom: 6px; }
+.atom-facts { margin: 0; display: grid; gap: 4px; }
+.atom-facts > div { display: grid; grid-template-columns: minmax(110px, auto) 1fr; gap: 10px; font-size: .85rem; padding: 3px 0; border-bottom: 1px dashed var(--line); }
+.atom-facts dt { color: var(--text-dim); }
+.atom-facts dd { margin: 0; }
+.bohr { grid-column: 2; grid-row: 1 / span 2; margin: 0; display: grid; place-items: center; gap: 6px; }
+.bohr-svg { width: min(100%, 360px); height: auto; }
+.bohr figcaption { font-size: .75rem; color: var(--warn); text-align: center; }
+@media (max-width: 720px) {
+  .atom-builder { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .bohr { grid-column: 1; grid-row: auto; }
+  .atom-identity { grid-column: 1; }
+}
+
+/* Periodic table */
+.ptable-wrap { display: grid; gap: 10px; }
+.ptable { display: grid; grid-template-columns: repeat(18, minmax(0, 1fr)) 1.6em; grid-auto-rows: minmax(2.6em, auto); gap: 2px; position: relative; }
+.ptable-cell { display: grid; grid-template-rows: auto auto; align-content: center; padding: 1px 2px; border: 1px solid var(--line); border-radius: 4px; background: var(--bg-elev-2); color: var(--text); cursor: pointer; font-size: .7rem; line-height: 1.1; min-width: 0; text-align: center; }
+.ptable-cell:hover { border-color: var(--accent); }
+.ptable-cell.selected { outline: 2px solid var(--accent); outline-offset: 1px; z-index: 1; }
+.ptable-z { font-size: .55rem; color: var(--text-faint); }
+.ptable-sym { font-weight: 650; font-size: .8rem; }
+.ptable-en { font-size: .55rem; color: var(--text); opacity: .9; }
+.ptable-blocks .block-s, .swatch.block-s { background: #2a3a6e; }
+.ptable-blocks .block-p, .swatch.block-p { background: #2d5a46; }
+.ptable-blocks .block-d, .swatch.block-d { background: #5a3f2d; }
+.ptable-blocks .block-f, .swatch.block-f { background: #4d2d5a; }
+.ptable-blocks .ptable-cell.exception, .swatch.exception { box-shadow: inset 0 0 0 2px var(--warn); }
+.ptable-radius .ptable-cell { background: var(--bg-elev-2); }
+.ptable-note { grid-row: 8; font-size: .68rem; color: var(--text-faint); align-self: center; }
+.ptable-arrow { font-size: .72rem; color: var(--warn); align-self: center; justify-self: center; white-space: nowrap; }
+.ptable-arrow-across { border-bottom: 1px solid var(--warn); padding: 0 8px; }
+.ptable-arrow-down { writing-mode: vertical-rl; border-left: 1px solid var(--warn); padding: 8px 0; }
+.ptable-legend { display: flex; flex-wrap: wrap; gap: 10px 16px; font-size: .75rem; color: var(--text-dim); }
+.legend-item { display: inline-flex; align-items: center; gap: 6px; }
+.swatch { display: inline-block; width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--line); background: var(--bg-elev-2); }
+.element-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; background: var(--bg-elev); }
+.element-card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.element-card-sym { font-size: 1.8rem; font-weight: 700; width: 2.2em; height: 2.2em; display: grid; place-items: center; border-radius: 10px; background: var(--bg-elev-2); border: 1px solid var(--line); }
+@media (max-width: 900px) { .ptable { font-size: .9em; } .ptable-en { display: none; } }
+
+/* Molecule viewer */
+.mol-viewer { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(260px, 1fr); height: 100%; min-height: 320px; }
+.mol-canvas { position: relative; min-height: 300px; }
+.mol-canvas canvas { display: block; width: 100% !important; height: 100% !important; }
+.mol-facts { padding: 14px 16px; overflow: auto; border-left: 1px solid var(--line); display: grid; gap: 10px; align-content: start; }
+.mol-caveat { font-size: .82rem; margin: 0; }
+@media (max-width: 760px) { .mol-viewer { grid-template-columns: 1fr; } .mol-facts { border-left: none; border-top: 1px solid var(--line); } }
+
+/* Text mode */
+.chem-text-mode { display: grid; gap: 16px; }
+.chem-text-facts { padding-left: 1.2em; font-size: .9rem; }
+.chem-text-facts li { margin-bottom: .35em; }
+.chem-text-mode .measurements { border-top: 1px solid var(--line); padding-top: 12px; }

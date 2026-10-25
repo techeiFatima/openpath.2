@@ -128,6 +128,19 @@ await page.waitForTimeout(400);
 report.langTranscript = (await page.locator('[aria-live="polite"]').first().textContent())?.replace(/\s+/g, ' ').slice(0, 160);
 await page.screenshot({ path: `${out}/12-language.png` });
 
+// Chemistry world: atom builder, periodic table, molecule viewer
+await page.goto(`${base}/#/world/atoms-molecules/lesson/chemistry.inside-the-atom?stage=1`, { waitUntil: 'networkidle' });
+await page.waitForSelector('.measurements', { timeout: 20000 });
+await page.waitForTimeout(600);
+report.chemAtomReadouts = await page.locator('.measure').count();
+report.chemAtomText = (await page.locator('.measurements').first().textContent())?.replace(/\s+/g, ' ').slice(0, 120);
+await page.screenshot({ path: `${out}/13-chem-atom.png` });
+await page.goto(`${base}/#/world/atoms-molecules/lesson/chemistry.why-atoms-bond?stage=1`, { waitUntil: 'networkidle' });
+await page.waitForTimeout(2500);
+report.chemCanvas = await page.locator('canvas').count();
+report.chemMoleculeText = (await page.locator('.measurements').first().textContent())?.replace(/\s+/g, ' ').slice(0, 120);
+await page.screenshot({ path: `${out}/14-chem-molecule.png` });
+
 // Resume: home shows continue link
 await page.setViewportSize({ width: 1400, height: 900 });
 await page.goto(`${base}/#/`, { waitUntil: 'networkidle' });
