@@ -21,13 +21,17 @@ Each phase ends in a usable, testable milestone. Estimates are deliberately omit
 5. **LLM instructor service** behind `buildGroundedPrompt`, with the post-filter for ungrounded numbers and offline evaluation; Dari and Pashto explanations.
 6. **Diagnostic placement** probe over the prerequisite graph.
 
-## Phase 3 — Multiple subjects
-1. **Mathematics: Functions & Calculus** (2D canvas world): coordinate systems, linear/quadratic functions, transformations, secant → tangent, derivative rules, Riemann sums → integrals. Reuses `expression.ts`; adds graph-object answer type.
-2. **Chemistry: Atoms & Molecules**: element dataset with a reusable license; electron configuration engine with tests against known exceptions; validated molecules from PubChem by CID; VSEPR geometry labelled as idealised; no invented reaction rules.
-3. **Architecture test:** three environments (3D, 2D, molecular) running on the same lesson schema, graders and learner model with no changes to core.
+## Phase 3 — Multiple subjects ✅ (milestone 2)
+- [x] Mathematics: Functions & Calculus (2D SVG graph; exact polynomial calculus; 4 lessons)
+- [x] Chemistry: Atoms & Molecules (atom builder, periodic table, molecule viewer; 4 lessons)
+- [x] Biology: Inside the Cell (scale explorer, DNA workbench; 3 lessons)
+- [x] Language: Conversation Street, English A1 (scripted dialogue with rule-based coach; 3 lessons)
+- [x] Architecture test passed: five environments (3D, 2D graph, molecular, 2D scale/DNA, dialogue) on one lesson schema, one grader set and one learner model; the only core additions were the generic `WorldShell` and the `short-text` answer type.
+- [ ] Graph-object answer type (not built).
 
-## Phase 4 — Comprehensive curriculum
-- Detailed curriculum maps per course (units → topics → concepts → objectives with standard refs), authored as data under review.
+## Phase 4 — Comprehensive curriculum (started)
+- [x] Unit → topic maps for all 58 planned courses (`src/worlds/curriculum-maps.ts`) and `npm run coverage`.
+- [ ] Concepts, objectives and standard refs per topic, authored as data under review.
 - Authoring workflow: lesson JSON + `validateLesson` + model-agreement tests + reviewer sign-off recorded in `CoverageStatus`.
 - `npm run coverage` report; public coverage page distinguishing planned / authored / implemented / reviewed / learner-tested.
 - Permission requests for *Permission required* sources we want; otherwise original content.
